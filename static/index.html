@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>URL Shortener</h1>
+            <p>Shorten your long URLs into memorable links</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="form-group">
+                    <input type="url" id="urlInput" placeholder="Enter your long URL (https://...)" required>
+                    <button id="shortenBtn">Shorten</button>
+                </div>
+
+                <div id="result" class="hidden">
+                    <h3>Your shortened URL:</h3>
+                    <div class="result-container">
+                        <input type="text" id="shortUrlInput" readonly>
+                        <button id="copyBtn">Copy</button>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab-header">
+                        <div class="tab-btn active" data-tab="shorten">Shorten</div>
+                        <div class="tab-btn" data-tab="update">Update</div>
+                        <div class="tab-btn" data-tab="delete">Delete</div>
+                    </div>
+
+                    <div class="tab-content" id="updateTab">
+                        <div class="form-group">
+                            <input type="text" id="uuidInput" placeholder="Enter short URL ID">
+                            <input type="url" id="newUrlInput" placeholder="Enter new destination URL">
+                            <button id="updateBtn">Update</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="deleteTab">
+                        <div class="form-group">
+                            <input type="text" id="deleteInput" placeholder="Enter short URL ID to delete">
+                            <button id="deleteBtn">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 URL Shortener</p>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

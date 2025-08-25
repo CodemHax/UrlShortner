@@ -1,10 +1,13 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse, JSONResponse
-from pydantic import BaseModel
-import uvicorn
 import logging
-from utils.utlis import shorten_uuid
+
+import uvicorn
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
 from database.database import collection
+from utils.utlis import shorten_uuid
 
 logging.basicConfig(
     level=logging.INFO,
@@ -54,26 +57,30 @@ async def redirect(uuid: str):
         )
         return RedirectResponse(url=url, status_code=302)
     else:
+        return FileResponse("static/404.html", status_code=404)
+
+
+
+@app.get("/delete/{uuid}")
+async def delete_url(request: Request, uuid: str):
+    org_url = await collection.find_one({"_id": uuid})
+    if not org_url:
         return JSONResponse(
             status_code=404,
             content={"detail": f"URL with ID '{uuid}' not found"}
         )
 
-@app.delete("/del")
-async def delete(url : URL):
-      del_link = url.url
-      org_url = await collection.find_one({"_id": del_link})
-      if org_url:
-          await collection.delete_one({"_id": del_link})
-          return JSONResponse(
-              status_code=204
-          )
-      else:
-          return JSONResponse(
-              status_code=404,
-              content={"detail": f"URL with ID '{del_link}' not found"}
-          )
+    if request.client.host != org_url.get('creator_ip'):
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "You are not authorized to delete this URL"}
+        )
 
+    await collection.delete_one({"_id": uuid})
+    return JSONResponse(
+        content={"detail": f"URL with ID '{uuid}' deleted"},
+        status_code=200
+    )
 
 @app.post("/update")
 async def update(request: Request, url: UpdateURL):
@@ -108,5 +115,17 @@ async def update(request: Request, url: UpdateURL):
         status_code=200,
         content={"detail": f"URL with ID '{url.uuid}' updated", "url": shortened_url}
     )
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="localhost", port=3000, log_level="debug")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def root():
+    return FileResponse("static/index.html")
+
+
+@app.exception_handler(404)
+async def custom_404_handler(request, exc):
+    return FileResponse("static/404.html", status_code=404)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=3030, log_level="debug")

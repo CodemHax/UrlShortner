@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .error-code {
+            font-size: 120px;
+            color: #3498db;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .error-message {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .back-home:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-container">
+            <h1 class="error-code">404</h1>
+            <p class="error-message">Oops! The page you're looking for doesn't exist.</p>
+            <p>The URL you requested could not be found on this server.</p>
+            <a href="/" class="back-home">Go to Homepage</a>
+        </div>
+    </div>
+</body>
+</html>
+
