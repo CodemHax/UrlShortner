@@ -16,6 +16,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
+def get_client_ip(request: Request) -> str:
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host or "unknown"
 
 class URL(BaseModel):
     url: str
@@ -26,9 +31,13 @@ class UpdateURL(BaseModel):
     url: str
     creator_ip: str = None
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 @app.post("/shorten")
 async def root(request: Request, arg: URL):
-    client_ip = request.client.host
+    client_ip = get_client_ip(request)
     url = arg.url
     if not url.startswith(('http://', 'https://')):
         return JSONResponse(
@@ -70,7 +79,7 @@ async def delete_url(request: Request, uuid: str):
             content={"detail": f"URL with ID '{uuid}' not found"}
         )
 
-    if request.client.host != org_url.get('creator_ip'):
+    if get_client_ip(request) != org_url.get('creator_ip'):
         return JSONResponse(
             status_code=403,
             content={"detail": "You are not authorized to delete this URL"}
@@ -91,13 +100,13 @@ async def update(request: Request, url: UpdateURL):
             content={"detail": f"URL with ID '{url.uuid}' not found"}
         )
 
-    if request.client.host != org_url.get('creator_ip'):
+    if get_client_ip(request) != org_url.get('creator_ip'):
         return JSONResponse(
             status_code=403,
             content={"detail": "You are not the creator of this URL"}
         )
 
-    client_ip = request.client.host
+    client_ip = get_client_ip(request)
 
     if not url.url.startswith(('http://', 'https://')):
         return JSONResponse(
@@ -127,5 +136,3 @@ async def root():
 async def custom_404_handler(request, exc):
     return FileResponse("static/404.html", status_code=404)
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=3030, log_level="debug")
