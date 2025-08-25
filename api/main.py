@@ -2,6 +2,9 @@ import os
 import sys
 import logging
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+if PROJECT_ROOT not in sys.path:
+    sys.path.append(PROJECT_ROOT)
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
@@ -18,11 +21,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
-if PROJECT_ROOT not in sys.path:
-    sys.path.append(PROJECT_ROOT)
 
-handler = app
 def get_client_ip(request: Request) -> str:
     xff = request.headers.get("x-forwarded-for")
     if xff:
@@ -93,7 +92,5 @@ app.mount("/static", StaticFiles(directory=os.path.join(PROJECT_ROOT, "static"))
 async def root():
     return FileResponse(os.path.join(PROJECT_ROOT, "static", "index.html"))
 
-
 # if __name__ == "__main__":
 #     uvicorn.run(app, host="0.0.0.0", port=3030, log_level="debug")
-
