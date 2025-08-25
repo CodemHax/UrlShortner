@@ -1,6 +1,4 @@
 import logging
-
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,6 +13,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 def get_client_ip(request: Request) -> str:
     xff = request.headers.get("x-forwarded-for")
@@ -125,14 +125,6 @@ async def update(request: Request, url: UpdateURL):
         content={"detail": f"URL with ID '{url.uuid}' updated", "url": shortened_url}
     )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 @app.get("/")
 async def root():
     return FileResponse("static/index.html")
-
-
-@app.exception_handler(404)
-async def custom_404_handler(request, exc):
-    return FileResponse("static/404.html", status_code=404)
-

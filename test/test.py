@@ -7,7 +7,7 @@ import json
 # )
 # print("Full response:", response.text)
 
-response = requests.delete(
+response = requests.post(
     "http://localhost:3000/del",
     json = {"url": "2o5dnban"}
 )
