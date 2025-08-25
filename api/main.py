@@ -2,7 +2,6 @@ import os
 import sys
 import logging
 
-# Ensure project root is on path for imports when running inside Vercel function directory
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
@@ -23,6 +22,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
+handler = app
 def get_client_ip(request: Request) -> str:
     xff = request.headers.get("x-forwarded-for")
     if xff:
