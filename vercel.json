@@ -1,13 +1,13 @@
 {
   "version": 2,
   "functions": {
-    "main.py": {
+    "api/main.py": {
       "runtime": "python3.11",
       "maxDuration": 10
     }
   },
   "routes": [
     { "src": "/static/(.*)", "dest": "/static/$1" },
-    { "src": "/(.*)", "dest": "/main.py" }
+    { "src": "/(.*)", "dest": "/api/main.py" }
   ]
 }
